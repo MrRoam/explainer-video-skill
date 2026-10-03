@@ -1,6 +1,7 @@
 """不安装渲染依赖，检查跨目录配置与本地文件保护。"""
 
 import json
+import os
 from pathlib import Path
 import subprocess
 import sys
@@ -86,6 +87,30 @@ class PortabilityTests(unittest.TestCase):
     def test_missing_config_gives_setup_instruction(self):
         with self.assertRaisesRegex(FileNotFoundError, "configure_runtime.py"):
             read_runtime(self.base / "missing.json")
+
+    @unittest.skipUnless(os.name == "nt", "初始化入口使用 Windows PowerShell")
+    def test_setup_reuses_existing_config_without_writing_it(self):
+        before = self.runtime.read_bytes()
+        result = subprocess.run([
+            "powershell.exe", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File",
+            str(ROOT / "scripts/setup.ps1"), "-RuntimePath", str(self.runtime),
+        ], cwd=self.base, capture_output=True, text=True, encoding="utf-8")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(self.runtime.read_bytes(), before)
+        self.assertFalse((self.base / "workspace").exists())
+
+    @unittest.skipUnless(os.name == "nt", "初始化入口使用 Windows PowerShell")
+    def test_setup_reports_invalid_explicit_environment_before_installing(self):
+        output = self.base / "new-runtime.json"
+        result = subprocess.run([
+            "powershell.exe", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File",
+            str(ROOT / "scripts/setup.ps1"), "-RuntimePath", str(output),
+            "-ManimPython", str(self.base / "missing-python.exe"),
+            "-TtsPython", str(self.base / "missing-python.exe"),
+        ], cwd=self.base, capture_output=True, text=True, encoding="utf-8")
+        self.assertNotEqual(result.returncode, 0)
+        self.assertFalse(output.exists())
+        self.assertIn("指定的 Python 不存在", result.stderr)
 
 
 if __name__ == "__main__":

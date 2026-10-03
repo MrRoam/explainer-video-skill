@@ -13,6 +13,8 @@ description: 制作中文讲解视频、科普视频、原理动画或 3b1b 风�
 
 本机配置为 skill 根目录的 `runtime.local.json`，也可通过 `EXPLAINER_RUNTIME` 或 `--runtime` 指定。先检查配置中的 Python、FFmpeg、配音模型与可用中文字体。配置缺失时，按 [README.md](README.md) 配置已有环境或安装缺少的依赖。不要为试玩搭建常驻服务或重复安装可复用的环境。
 
+Windows 首次安装可运行 `scripts/setup.ps1`，自动安装所需 CPU 依赖、下载中文模型并保存本机配置。已有有效配置时只检查路径；脚本不安装 Python、TeX 或 CUDA。已有工具放在其他目录时，传入对应环境和模型路径以复用。
+
 ```powershell
 python "SKILL_DIR\scripts\init_project.py" --workspace "WORKSPACE" --name concept-video
 ```

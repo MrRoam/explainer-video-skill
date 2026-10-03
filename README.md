@@ -36,6 +36,20 @@ Set-Location "$env:USERPROFILE\.agents\skills\explainer-video"
 
 已有同名 skill 时先保留原目录，选择其他位置进行比较；不要直接覆盖已有配置。Codex 的用户级目录和调用方式见[官方 Skills 文档](https://learn.chatgpt.com/docs/build-skills)。安装后若当前窗口未显示该 skill，重启 Codex 再打开新窗口。
 
+### 首次使用：一条命令初始化
+
+Windows 已安装 Python 3.11 或 3.12 时，在仓库目录执行：
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\setup.ps1
+```
+
+脚本自动创建独立环境、安装 CPU 依赖、下载 Kokoro 中文模型和两个音色、查找 FFmpeg，并生成本机配置，无需手填路径或准备 API key。首次下载需联网，约 328 MB 模型之外还有 Python 依赖；以后复用已经配置好的环境。已有有效的 `runtime.local.json` 时，再次运行只检查路径，不重新安装。
+
+**clone 本身只下载仓库，不会执行安装。** 初始化命令不安装 Python、TeX 或 CUDA。附带导数样片使用 MathTex，仍需已有 TeX；没有时可让 Codex 改用 Text 和几何对象绘制公式。
+
+需要复用其他位置的环境时，下面的手动配置仍可用。`setup.ps1` 也支持 `-ManimPython`、`-TtsPython`、`-ModelDirectory`、`-FFmpeg`、`-TexBin` 与 `-RuntimePath`，重配用 `-Reconfigure`。显式提供的 Python 环境不会被安装脚本修改。
+
 ### 已有工具：只配置路径
 
 使用下面的配置命令，把示例路径换成你的已有环境。这个脚本检查路径和必要依赖，不安装软件、不下载权重。
@@ -54,7 +68,7 @@ python .\scripts\configure_runtime.py `
 
 ### 没有工具：安装最小环境
 
-先安装 Python 3.12，并确认 `py -3.12` 可用。两个独立环境方便单独复用和维护；不会修改全局 Python。
+也可以手动执行以下步骤，效果与初始化脚本一致。先安装 Python 3.12，并确认 `py -3.12` 可用。两个独立环境方便单独复用和维护；不会修改全局 Python。
 
 ```powershell
 py -3.12 -m venv .venv-manim
@@ -102,7 +116,7 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\demo-workspace\outputs
 
 ## 验证范围
 
-已在 Windows 验证 Manim + Kokoro CPU + FFmpeg 的完整导数样片，并检查时长、编码、分辨率和末段旁白。仓库中的轻量测试检查配置迁移、目录保护和离线模型入口；它们不评估画面和音色的主观质量。全新 Python 3.12 环境的安装命令未在空白机器上完整重装验证。
+已在 Windows 验证 Manim + Kokoro CPU + FFmpeg 的完整导数样片，并检查时长、编码、分辨率和末段旁白。初始化脚本的已有环境接入与重复运行已在本机验证。仓库中的轻量测试检查配置迁移、目录保护和离线模型入口；它们不评估画面和音色的主观质量。全新 Python 3.12 环境的安装命令未在空白机器上完整重装验证。
 
 ```powershell
 python -m unittest discover -s tests -v
