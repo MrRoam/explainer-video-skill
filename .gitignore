@@ -1,0 +1,23 @@
+# 本机路径、密钥和依赖不进入公开仓库。
+runtime.local.json
+runtime.*.local.json
+**/local-runtime.json
+**/tools.json
+.env
+.env.*
+*.pem
+*.key
+.venv*/
+venv/
+models/
+*.pth
+*.pt
+*.onnx
+*.safetensors
+__pycache__/
+*.py[cod]
+work/
+outputs/
+demo-workspace/
+media/
+*.part

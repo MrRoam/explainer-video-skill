@@ -1,0 +1,9 @@
+# 先按 README 安装 CPU torch，避免默认索引拉取不需要的 GPU 依赖。
+torch==2.10.0
+kokoro==0.9.4
+misaki[zh]==0.9.4
+spacy-curated-transformers==0.3.1
+transformers>=4.57,<5
+soundfile>=0.13,<0.14
+# jieba 仍使用 pkg_resources，Python 3.12 的 venv 不再自带 setuptools。
+setuptools>=70,<81
